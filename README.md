@@ -408,6 +408,33 @@ class AppFixtures extends Fixture
 
             $manager->persist($comment);
         }
+        
+         ###
+        #   Tag
+        # INSERTION de Tag en les liants
+        # avec des Post au hasard
+        #
+        ###
+        // on choisit le nombre de Tags entre 20 et 35
+        $tagNB = mt_rand(20,35);
+        for($i=1;$i<=$tagNB;$i++){
+            $tag = new Tag();
+            # création d'un slug par Faker
+            $tag->setTagName($faker->slug(mt_rand(2,3), true));
+            # on compte le nombre d'articles
+            $nbArticles = count($posts);
+            # on en prend 1/5
+            $PostNB = (int) round($nbArticles/5);
+            # On en choisit au hasard avec maximum 20 tags ($nbArticles/5) = 100/5
+            # On choisit 2 articles minimum au hasard sinon on récupère un int
+            # et non pas un array
+            $articleID = array_rand($posts, mt_rand(2,$PostNB));
+            foreach($articleID as $id){
+                // on ajoute l'article au tag
+                $tag->addPost($posts[$id]);
+            }
+            $manager->persist($tag);
+        }
 
         // validation de la transaction
         $manager->flush();
@@ -415,5 +442,5 @@ class AppFixtures extends Fixture
 }
 ```
 
-
+    php bin/console d:f:l
 
